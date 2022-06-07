@@ -6,7 +6,13 @@ import Filter from './Filter/Filter';
 import styles from './Phonebook.module.css';
 import 'notyf/notyf.min.css';
 
-const notyf = new Notyf();
+const notyf = new Notyf({
+  duration: 1000,
+  position: {
+    x: 'right',
+    y: 'top',
+  },
+});
 
 const filterContacts = (contacts, filter) => {
   return contacts.filter(contact =>
@@ -29,25 +35,11 @@ export default class Phonebook extends Component {
     const { contacts } = this.state;
 
     if (filterContacts(contacts, newContact.name).length) {
-      notyf.error({
-        message: `${newContact.name} is allready in phonebook`,
-        duration: 5000,
-        position: {
-          x: 'center',
-          y: 'center',
-        },
-      });
+      notyf.error(`${newContact.name} is allready in phonebook`);
 
       return;
     }
-    notyf.success({
-      message: `Contact ${newContact.name} added`,
-      duration: 2000,
-      position: {
-        x: 'center',
-        y: 'center',
-      },
-    });
+    notyf.success(`Contact ${newContact.name} added`);
     this.setState(state => ({
       contacts: [...state.contacts, newContact],
     }));
@@ -57,20 +49,13 @@ export default class Phonebook extends Component {
     this.setState(state => ({
       contacts: state.contacts.filter(contact => contact.id !== id),
     }));
-    notyf.success({
-      message: `Contact deleted`,
-      duration: 2000,
-      position: {
-        x: 'center',
-        y: 'center',
-      },
-    });
+    notyf.success(`Contact deleted`);
   };
 
-  handleFilterChanges = filter => {
-    this.setState({ filter });
+  handleFilterChange = e => {
+    const { name, value } = e.currentTarget;
+    this.setState({ [name]: value });
   };
-
   render() {
     const { contacts, filter } = this.state;
 
@@ -82,7 +67,10 @@ export default class Phonebook extends Component {
         <ContactForm addContactIntoState={this.addContactIntoState} />
 
         <h2 className={styles.title}>Contacts</h2>
-        <Filter filter={filter} onFilter={this.handleFilterChanges} />
+        <Filter
+          onChange={this.handleFilterChange}
+          value={filter}
+        />
         <ContactList
           renderContacts={filteredContacts}
           deleteContacts={this.deleteContactFromState}

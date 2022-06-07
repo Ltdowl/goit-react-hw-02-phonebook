@@ -58,7 +58,7 @@ export default class ContactForm extends Component {
         <label htmlFor="number" className={styles.lable}>
           Number
           <input
-            type="text"
+            type="tel"
             placeholder="Enter number..."
             name="number"
             value={number}
